@@ -12,7 +12,7 @@ public class UserDAO {
     private static final String DELETE_USER = "DELETE FROM users where id = ?";
     private static final String SELECT_USER = "SELECT * FROM users WHERE id = ?";
     private static final String SELECT_ALL_USERS = "SELECT * FROM users";
-    private static final String UPDATE_USER = "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?";
+    private static final String UPDATE_USER = "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?;";
 
     public User create(User user){
         try(Connection conn = DBUtil.connect()){
@@ -24,8 +24,10 @@ public class UserDAO {
             st.executeUpdate();
             ResultSet resultSet = st.getGeneratedKeys();
             if(resultSet.next()){
-                user.setId(resultSet.getInt(1));
+                int a = resultSet.getInt(1);
+                user.setId(a);
             }
+            st.close();
             return user;
 
         }catch (SQLException e){
@@ -39,6 +41,7 @@ public class UserDAO {
             PreparedStatement st = conn.prepareStatement(DELETE_USER);
             st.setInt(1, id);
             st.executeUpdate();
+            st.close();
         }catch (SQLException e){
             e.printStackTrace();
         }
@@ -47,7 +50,7 @@ public class UserDAO {
         User user = new User();
         try(Connection conn = DBUtil.connect()){
             PreparedStatement st = conn.prepareStatement(SELECT_USER);
-            st.setInt(1, id);
+            st.setString(1, String.valueOf(id));
             ResultSet resultSet = st.executeQuery();
             if(resultSet.next()){
                 user.setId(resultSet.getInt("id"));
@@ -55,6 +58,7 @@ public class UserDAO {
                 user.setEmail(resultSet.getString("email"));
                 user.setPassword(resultSet.getString("password"));
             }
+            st.close();
         }catch(SQLException e){
             e.printStackTrace();
             return null;
@@ -66,11 +70,12 @@ public class UserDAO {
     public void update(User user){
         try(Connection conn = DBUtil.connect()){
             PreparedStatement st = conn.prepareStatement(UPDATE_USER);
-            st.setInt(4, user.getId());
             st.setString(1, user.getUserName());
             st.setString(2, user.getEmail());
             st.setString(3, hashPassword(user.getPassword()));
+            st.setString(4, String.valueOf(user.getId()));
             st.executeUpdate();
+            st.close();
         }catch (SQLException e){
             e.printStackTrace();
         }
@@ -89,8 +94,8 @@ public class UserDAO {
                 users = addToArray(user, users);
             }
             printAllUsers(users);
+            st.close();
             return users;
-
         }catch (SQLException e){
             e.printStackTrace();
             return null;

@@ -13,7 +13,6 @@ public class User {
     }
 
     public User(){
-
     }
 
     public int getId() {
@@ -48,10 +47,5 @@ public class User {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return id + " : " + userName +
-                ", " + email +
-                ", " + password;
-    }
+
 }
