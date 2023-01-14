@@ -6,7 +6,7 @@ public class Main {
         UserDAO dao = new UserDAO();
         User user = dao.read(16);
         user.setEmail("pavel@gmail.com");
-        user.setUserName("Pavel Hladki");
+        user.setUserName("Pa");
         dao.update(user);
     }
 }
